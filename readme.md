@@ -38,9 +38,13 @@ Running tests
 --------------
 
 open rQuery.test.xlsm
+
 Activate macro
-Alt+f11
-ctrl+G
+
+Alt+f11 (goes to vbe editor)
+
+ctrl+G (display command line)
+
 enter "runALL" + enter
 
 Contributing
