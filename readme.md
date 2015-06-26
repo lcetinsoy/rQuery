@@ -22,7 +22,7 @@ set myRowRange = rngRight(mySheet.range("A1"))
 'Returns a row containing all cells starting from cell A1 to the last non empty cell
 
 set myRowRange = rngRight(mySheet.range("A1"), 10)
-' Returns the range A1: A10
+'Returns the range A1: A10
 
 set myColumnRange = rngDown(mySheet.range("B1"))
 'Returns a column containing all cells starting from cells B1 to the last non empty cell
