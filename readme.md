@@ -13,7 +13,7 @@ rQuery provides convinient ways to select data ranges.
 
 Installation
 ------------
-Download the libRange and put it in your vba project.
+Download the rQuery.bas file and put it in your vba project.
 
 Usage
 -----
