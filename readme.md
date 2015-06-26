@@ -45,7 +45,7 @@ Alt+f11 (goes to vbe editor)
 
 ctrl+G (display command line)
 
-enter "runALL" + enter
+enter "runTests" + enter
 
 Contributing
 ------------
