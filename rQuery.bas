@@ -1,26 +1,6 @@
-Attribute VB_Name = "libRange"
+Attribute VB_Name = "rQ"
 Option Explicit
 
-
-Function IsInArray(stringToBeFound As String, arr As Variant) As Boolean
-  IsInArray = (UBound(Filter(arr, stringToBeFound)) > -1)
-End Function
-
-Function WorkbookNamedRanges() As String()
-
-    Dim myName As name
-    Dim nName As Integer: nName = ThisWorkbook.names.Count
-    Dim names() As String
-    ReDim names(nName)
-    Dim iName
-    For iName = 1 To nName
-        
-        names(iName - 1) = ThisWorkbook.names(iName).name
-        
-    Next
-    
-    WorkbookNamedRanges = names
-End Function
 
 Function rngEmptyRight(rngStart As Range) As Range
     
@@ -28,146 +8,17 @@ Function rngEmptyRight(rngStart As Range) As Range
 
 End Function
 
-Function GetWorksheetNamedRanges(wsSource As Worksheet, Optional nameFilter As String = "") As Collection
-    
-    Dim myName As name
-    Dim nameCollection As New Collection
-    
-    For Each myName In wsSource.names
-        If nameFilter <> "" Then
-        
-            If InStr(1, myName.name, nameFilter) Then
-                nameCollection.Add Range(myName), Split(myName.name, "!")(1)
-            End If
-        Else
-            nameCollection.Add Range(myName), Split(myName.name, "!")(1)
-        End If
-    Next
-    
-    Set GetWorksheetNamedRanges = nameCollection
-End Function
-
-Function rngConvertToDoubleArray(rngSource As Range, Optional blTranspose As Boolean = False) As Double()
-    Dim nCol As Integer, nRow As Integer
-    Dim iCol As Integer, iRow As Integer
-    Dim myArray() As Double
-    
-    nRow = rngSource.Rows.Count
-    nCol = rngSource.Columns.Count
-        
-        
-    If nCol = 1 Or nRow = 1 Then
-        Dim nCells As Integer
-        nCells = WorksheetFunction.max(nRow, nCol)
-        ReDim myArray(nCells)
-                    
-        For iRow = 1 To nCells
-            
-            myArray(iRow) = rngSource.Cells(iRow)
-            
-        Next
-
-    Else
-        If blTranspose Then
-
-            For iRow = 1 To nRow
-                
-                For iCol = 1 To nCol
-                    myArray(iRow, iCol) = rngSource(iRow, iCol)
-                Next
-                
-            Next
-        Else
-            
-            ReDim myArray(nCol, nRow)
-                    
-            For iRow = 1 To nRow
-                For iCol = 1 To nCol
-                    myArray(iCol, iRow) = rngSource(iRow, iCol)
-                Next
-            Next
-        
-        End If
-        
-    End If
-    
-    
-    rngConvertToDoubleArray = myArray
-End Function
-
-Public Sub displayLine(rngFirstCell As Range, arrayValue)
-    
-    Dim cellValue
-    Dim rngCell As Range
-    Set rngCell = rngFirstCell
-    
-    For Each cellValue In arrayValue
-        
-        rngCell.value = cellValue
-        Set rngCell = rngCell.Offset(0, 1)
-            
-    Next
-
-End Sub
-
-Sub DisplayElements(elements As Variant, rngFirstCell As Range, Optional direction As XlDirection = xlDown)
-    
-    Dim elt
-    Dim iElt As Integer
-    
-    iElt = 1
-    
-    If direction = xlDown Then
-    
-        For Each elt In elements
-            rngFirstCell(iElt) = elt
-            iElt = iElt + 1
-        Next
-        
-    ElseIf direction = xlToRight Then
-        
-        For Each elt In elements
-            rngFirstCell(1, iElt) = elt
-            iElt = iElt + 1
-        Next
-        
-    End If
-    
-End Sub
-
-
-Public Function rngTransposeToH(rngVertical As Range, rngRes_FC As Range, Optional delete As Boolean = False)
-
-    Dim rngIter As Range
-    Dim iCell As Integer
-    iCell = 1
-    For Each rngIter In rngVertical
-        
-        rngRes_FC.Offset(0, iCell - 1).value = rngIter.value
-        iCell = iCell + 1
-    
-    Next
-    
-    If delete = True Then
-        rngVertical.ClearContents
-    End If
-    
-End Function
-
-
-Option Explicit
-Option Base 1
 
 'TODO: coder un rngRight, left, etc, avec un arrêt par valeur Range(cell, cell.find)
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 'rngUp: Return a vertical range containing all values above a given cell (included)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function rngUp(rngStartCell As Range, Optional nCell As Integer = 0) As Range
+Public Function columnUp(rngStartCell As Range, Optional nCell As Integer = 0) As Range
 
     
     If nCell = 0 Then
-        If IsEmpty(rngStartCell.Offset(-1, 0)) Then
+        If isEmpty(rngStartCell.Offset(-1, 0)) Then
         
             Set rngUp = rngStartCell
         Else
@@ -184,10 +35,10 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 'rngDown: Return a vertical range containing all values below a given cell (included)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function rngDown(rngStartCell As Range, Optional nCell As Integer = 0) As Range
+Public Function columnDown(rngStartCell As Range, Optional nCell As Integer = 0) As Range
         
     If nCell = 0 Then
-        If IsEmpty(rngStartCell.Offset(1, 0)) Then
+        If isEmpty(rngStartCell.Offset(1, 0)) Then
         
             Set rngDown = rngStartCell
         Else
@@ -204,11 +55,11 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 'rngRight: Return an horizontal range containing all cells after a given cell (included)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function rngRight(rngStartCell As Range, Optional nCell As Integer = 0) As Range
+Public Function rowRight(rngStartCell As Range, Optional nCell As Integer = 0) As Range
 
     
     If nCell = 0 Then
-        If IsEmpty(rngStartCell.Offset(0, 1)) Then
+        If isEmpty(rngStartCell.Offset(0, 1)) Then
         
             Set rngRight = rngStartCell
         Else
@@ -225,10 +76,10 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 'rngRight: Return an horizontal range containing all cells before a given cell (included)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function rngLeft(rngStartCell As Range, Optional nCell As Integer = 0) As Range
+Public Function rowLeft(rngStartCell As Range, Optional nCell As Integer = 0) As Range
 
     If nCell = 0 Then
-        If IsEmpty(rngStartCell.Offset(0, -1)) Then
+        If isEmpty(rngStartCell.Offset(0, -1)) Then
         
             Set rngLeft = rngStartCell
         Else
@@ -249,15 +100,15 @@ Public Function rngArray(rngStartCell As Range, Optional nRow As Integer = 0, Op
     
     Dim rngEndCell As Range
     
-    If IsEmpty(rngStartCell.Offset(1, 0)) And IsEmpty(rngStartCell.Offset(0, 1)) Then
+    If isEmpty(rngStartCell.Offset(1, 0)) And isEmpty(rngStartCell.Offset(0, 1)) Then
             
         Set rngEndCell = rngStartCell
     
-    ElseIf IsEmpty(rngStartCell.Offset(1, 0)) Then
+    ElseIf isEmpty(rngStartCell.Offset(1, 0)) Then
         
         Set rngEndCell = rngStartCell.End(xlToRight)
     
-    ElseIf IsEmpty(rngStartCell.Offset(0, 1)) Then
+    ElseIf isEmpty(rngStartCell.Offset(0, 1)) Then
         Set rngEndCell = rngStartCell.End(xlDown)
     
     Else
@@ -315,94 +166,19 @@ Public Function rngArrayFromEnd(rngLastCell As Range, Optional nRow As Integer =
 End Function
 
 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function dispArray(array1D, rngFirstCell As Range)
-    
-    Dim elt
-    Dim iElt As Integer
-    
-    iElt = 1
-    For Each elt In array1D
-        rngFirstCell(iElt) = elt
-        Inc iElt
-    Next
-         
-End Function
-
-Sub DispElements(elements As Variant, rngFirstCell As Range, Optional direction As XlDirection = xlDown)
-    
-    Dim elt
-    Dim iElt As Integer
-    
-    iElt = 1
-    
-    If direction = xlDown Then
-    
-        For Each elt In elements
-            rngFirstCell(iElt) = elt
-            Inc iElt
-        Next
-        
-    ElseIf direction = xlToRight Then
-        
-        For Each elt In elements
-            rngFirstCell(, iElt) = elt
-            Inc iElt
-        Next
-        
-    End If
-    
-End Sub
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function display2DArray(array2D, rngFirstCell)
-
-    Range(rngFirstCell, rngFirstCell.Offset(UBound(array2D, 1) - 1, UBound(array2D, 2) - 1)) = array2D
-
-End Function
 
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function display3DArray(array3D, rngFirstCells)
-
-    Dim iCell As Integer
-    Dim iRow As Integer, iCol As Integer
-    
-    Dim rng As Range
-    iCell = 1
-    For Each rng In rngFirstCells
-    
-        For iRow = 1 To UBound(array3D, 1)
-        
-            For iCol = 1 To UBound(array3D, 2)
-            
-                rng.Offset(iRow - 1, iCol - 1).value = array3D(iRow, iCol, iCell)
-            
-            Next
-        
-        Next
-        iCell = iCell + 1
-    Next
-
-End Function
-
-
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function GetFirstNonBlankValueIndex(rngSource As Range) As Integer
+Public Function indexOfFirtNonEmptyCell(rngSource As Range) As Integer
     
     Dim rngIt As Range
     Dim iValue As Integer
     iValue = 1
     For Each rngIt In rngSource
         
-        If Not IsEmpty(rngIt) Then
+        If Not isEmpty(rngIt) Then
             GetFirstNonBlankValueIndex = iValue
             Exit Function
         End If
@@ -416,7 +192,7 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function GetFirstIndexOfValueDifferent(rngSource As Range, valueToLook) As Integer
+Public Function indexOfValueDifferent(rngSource As Range, valueToLook) As Integer
     
     Dim rngIt As Range
     Dim iValue As Integer
@@ -433,7 +209,7 @@ Public Function GetFirstIndexOfValueDifferent(rngSource As Range, valueToLook) A
 
 End Function
 
-Function FindRangeDifferentThan(valueToSkip, rngSource) As Range
+Function findCellDifferentOf(valueToSkip, rngSource) As Range
         
     Dim rngIt As Range
         
@@ -451,7 +227,7 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function GetNumberOfSameValues(rngToLookFC As Range, Optional direction As XlDirection = xlDown) As Integer
+Public Function countIdenticalValues(rngToLookFC As Range, Optional direction As XlDirection = xlDown) As Integer
 
     Dim ValSource
     Dim nValue As Integer
@@ -489,7 +265,7 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Function SelectColumnsFromArray(rngSourceArray As Range, rngIncludeColumn As Range) As Range
+Function selectArrayColumns(rngSourceArray As Range, rngIncludeColumn As Range) As Range
     
     Dim rngColumn As Range, rngEffectiveSource As Range
     Dim iCol As Integer
@@ -512,7 +288,7 @@ Function SelectColumnsFromArray(rngSourceArray As Range, rngIncludeColumn As Ran
     Set SelectColumnsFromArray = rngEffectiveSource
 End Function
 
-Function rngSelectRows(rngSourceArray As Range, rngIncludeRows As Range) As Range
+Function rngSelectArrayRows(rngSourceArray As Range, rngIncludeRows As Range) As Range
     
     Dim rngRow As Range, rngEffectiveSource As Range
     Dim iRow As Integer
@@ -610,7 +386,7 @@ Public Function BuildUnionOfTablesFCS(rngFirstTableFC As Range, nBlankCellsBetwe
             
     Set rngIt = rngFirstTableFC
     
-    Do While Not IsEmpty(rngIt)
+    Do While Not isEmpty(rngIt)
         
         If BuildUnionOfTablesFCS Is Nothing Then
         
@@ -627,7 +403,7 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function InsertRowInRange(rngRowCellWhereToInsert As Range, rngValuesToInsert As Range)
+Public Function insertRowInRange(rngRowCellWhereToInsert As Range, rngValuesToInsert As Range)
         
     Dim rngRow As Range
     Set rngRow = rngRight(rngRowCellWhereToInsert)
@@ -642,54 +418,12 @@ End Function
 '@input rngRangeToCopy range: The range to copy'
 '@input rngDestFC range: The first cell of the destination range
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Sub CopyAndPasteRange(rngRangeToCopy As Range, rngDestFC As Range, Optional blTranspose As Boolean = False)
+Public Sub copyAndPaste(rngRangeToCopy As Range, rngDestFC As Range, Optional blTranspose As Boolean = False)
 
     rngRangeToCopy.Copy
     
     rngDestFC.PasteSpecial xlPasteValues, , , blTranspose
     
-End Sub
-
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'CountDimensions: Count the dimension number of an Array
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function CountDimensions(arraySource) As Integer
-    Dim res
-    Dim DimNum As Integer
-      'Sets up the error handler.
-    On Error GoTo FinalDimension
-    For DimNum = 1 To 100
-
-         'It is necessary to do something with the LBound to force it
-         'to generate an error.
-        res = LBound(arraySource, DimNum)
-
-    Next DimNum
-
-    Exit Function
-
-      ' The error routine.
-FinalDimension:
-
-    CountDimensions = DimNum - 1
-
-End Function
-
-
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Sub DisplayObjectFamily(familyToDisplay As Variant, rngDestFC As Range)
-    
-    Dim iterator
-    Dim iValue As Integer
-    
-    iValue = 1
-    For Each iterator In familyToDisplay
-        rngDestFC(iValue).value = iterator
-        Inc iValue
-    Next
-
 End Sub
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -707,9 +441,9 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Function NewRowRange(rngSourceFC As Range) As Range
     
-    If IsEmpty(rngSourceFC) Then
+    If isEmpty(rngSourceFC) Then
         Set NewRowRange = rngSourceFC
-    ElseIf IsEmpty(rngSourceFC.Offset(1, 0)) Then
+    ElseIf isEmpty(rngSourceFC.Offset(1, 0)) Then
         Set NewRowRange = rngSourceFC.Offset(1, 0)
     Else
         Set NewRowRange = rngSourceFC.End(xlDown).Offset(1, 0)
@@ -728,17 +462,8 @@ Function rngDownValue(rngFC As Range, value As Variant) As Range
     Set rngDownValue = Range(rngFC, rngIt)
 End Function
 
-Function rngDownValueTst()
 
-    With wsTests
-        .UsedRange.ClearContents
-        dispArray Array(1, 1, 1, 3), .Range("A1")
-        .Range("C1") = rngDownValue(.Range("A1"), 1).Address
-    End With
-    
-End Function
-
-Function rngEnd(rngSourceFC As Range, Optional stopCond As Variant = Nothing, Optional direction As XlDirection = xlDown) As Range
+Function tail(rngSourceFC As Range, Optional stopCond As Variant = Nothing, Optional direction As XlDirection = xlDown) As Range
     
     Dim rngIt As Range
        
@@ -780,11 +505,11 @@ Function rngEnd(rngSourceFC As Range, Optional stopCond As Variant = Nothing, Op
             End If
         End If
     Else
-         If Not IsEmpty(rngSourceFC) And IsEmpty(rngSourceFC.Offset(1, 0)) Then
+         If Not isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(1, 0)) Then
             Set rngIt = rngSourceFC
-        ElseIf IsEmpty(rngSourceFC) And IsEmpty(rngSourceFC.Offset(2, 0)) Then
+        ElseIf isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(2, 0)) Then
             Set rngIt = rngSourceFC.Offset(1, 0)
-        ElseIf IsEmpty(rngSourceFC) Then
+        ElseIf isEmpty(rngSourceFC) Then
             Set rngIt = rngSourceFC.Offset(1, 0).End(direction)
         Else
             Set rngIt = rngSourceFC.End(direction)
@@ -795,17 +520,7 @@ Function rngEnd(rngSourceFC As Range, Optional stopCond As Variant = Nothing, Op
     Set rngEnd = rngIt
 End Function
 
-Sub rngEndTst()
-
-    With wsTests
-        .UsedRange.ClearContents
-        dispArray Array(1, 1, 1, 3), .Range("A1")
-        .Range("C1").value = rngEnd(.Range("A1"), "OnValChange").Address
-    End With
-End Sub
-
-
-Function rngSubArray(rngArray, rowIndexes, colIndexes) As Range
+Function subArrayRange(rngArray, rowIndexes, colIndexes) As Range
 
     Set rngSubArray = Range(rngArray(rowIndexes(1), colIndexes(1)), rngArray(rowIndexes(2), colIndexes(2)))
     
@@ -861,7 +576,7 @@ Function ProperUnion(ParamArray Ranges() As Variant) As Range
     Set ProperUnion = ResR
 End Function
 
-Function rngIsEmpty(rngSource As Range) As Boolean
+Function isRangeEmpty(rngSource As Range) As Boolean
 
     If WorksheetFunction.Count(rngSource) = 0 Then
     
@@ -875,39 +590,66 @@ Function rngIsEmpty(rngSource As Range) As Boolean
 End Function
 
 
-
-Public Sub NameAdd(rngCellsToName As Range, strBasename As String)
-
-    Dim rngIter As Range
-    Dim iCell As Integer
-    
-    iCell = 1
-    For Each rngIter In rngCellsToName
-    
-        rngIter.name = strBasename & CStr(iCell)
-        iCell = iCell + 1
-    Next
-    
-
-End Sub
-Public Function NameDelete(rngCells As Range)
-
-    Dim rngIter As Range
-    Dim iCell As Integer
-    On Error Resume Next
-    For Each rngIter In rngCells
-    
-        names(rngIter.name).delete
-    
-    Next
-    On Error GoTo 0
-End Function
-
-Public Function rngSort(rngToSort As Range, colSort As Integer, Optional order As XlSortOrder = xlAscending)
+Public Function sortRange(rngToSort As Range, colSort As Integer, Optional order As XlSortOrder = xlAscending)
 
     rngToSort.Sort rngToSort.Columns(colSort), order
     
 End Function
 
 
+
+
+Function getWorksheetNamedRanges(wsSource As Worksheet, Optional nameFilter As String = "") As Collection
+    
+    Dim myName As name
+    Dim nameCollection As New Collection
+    
+    For Each myName In wsSource.names
+        If nameFilter <> "" Then
+        
+            If InStr(1, myName.name, nameFilter) Then
+                nameCollection.Add Range(myName), Split(myName.name, "!")(1)
+            End If
+        Else
+            nameCollection.Add Range(myName), Split(myName.name, "!")(1)
+        End If
+    Next
+    
+    Set getWorksheetNamedRanges = nameCollection
+End Function
+
+
+Public Function columnToRow(rngVertical As Range, rngRes_FC As Range, Optional delete As Boolean = False)
+
+    Dim rngIter As Range
+    Dim iCell As Integer
+    iCell = 1
+    For Each rngIter In rngVertical
+        
+        rngRes_FC.Offset(0, iCell - 1).value = rngIter.value
+        iCell = iCell + 1
+    
+    Next
+    
+    If delete = True Then
+        rngVertical.ClearContents
+    End If
+    
+End Function
+
+Function getWorkbookNamedRanges() As String()
+
+    Dim myName As name
+    Dim nName As Integer: nName = ThisWorkbook.names.Count
+    Dim names() As String
+    ReDim names(nName)
+    Dim iName
+    For iName = 1 To nName
+        
+        names(iName - 1) = ThisWorkbook.names(iName).name
+        
+    Next
+    
+    WorkbookNamedRanges = names
+End Function
 
