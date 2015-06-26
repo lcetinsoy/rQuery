@@ -1,5 +1,6 @@
-rQuery a VBA library for range manipulation
+rQuery
 ===========================================
+a VBA library for range manipulation
 
 
 Why
@@ -12,7 +13,7 @@ rQuery provides convinient ways to select data ranges.
 
 Installation
 ------------
-Download the file and put it in your vba project.
+Download the libRange and put it in your vba project.
 
 Usage
 -----
@@ -40,39 +41,38 @@ Documentation
 -------------
 ```vba
 rngRight(rngStartCell As Range, Optional nCell As Integer = 0) as Range
-```
+
 Returns a row range starting from rngStartCell going to the right
 
 If nCell is set to 0, rngRight automatically ends the row before the next empty cell
-```vba
+
 rngLeft(rngStartCell As Range, Optional nCell As Integer = 0) As Range
-```
+
 Returns a row range starting from rngStartCell going to the right
 
 If nCell is set to 0, rngLeft automatically ends the row before the next empty cell
-```vba
+
 rngDown(rngStartCell As Range, Optional nCell As Integer = 0) As Range
-```
+
 Returns a column range starting from rngStartCell going down
 
 If nCell is set to 0, rngDown automatically ends the column before the next empty cell
-```vba
+
 rngUp(rngStartCell As Range, Optional nCell As Integer = 0) As Range
-```
+
 Returns a column range starting from rngStartCell going up
 
 If nCell is set to 0, rngDown automatically ends the column before the next empty cell
-```vba
+
 rngArray(rngStartCell As Range, Optional nRow As Integer = 0, Optional nCol As Integer = 0) As Range
-```
+
 Returns a two dimensional range starting at rngStartCell
 
 Leaving nCol or nRow to 0 tells rngArray to add data to a row (or a column) until the next empty cell (not included)
-```vba
-rngArrayFromEnd(rngLastCell As Range, Optional nRow As Integer = 0, Optional nCol As Integer = 0) As Range
-```
+
 Returns a two dimensional range but the selection is made for the bottom right end corner of the table you want to select
-```vba
+
 rngEnd(rngSourceFC As Range, Optional stopCond As Variant = Nothing, Optional direction As XlDirection = xlDown) As Range
-```
+
 Returns the last cell of a data set in a given direction
+```
