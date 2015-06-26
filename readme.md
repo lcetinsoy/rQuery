@@ -30,8 +30,9 @@ set myArrayRange = rngArray(mySheet.range("C1"), nRow = 10) 'Return a table rang
 Contributing
 ------------
 
-Automatic testing are comming
-right now juste clone and pull request
+Automatic testing are comming.
+
+Just clone and pull request
 
 
 Documentation
