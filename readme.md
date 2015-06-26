@@ -36,8 +36,9 @@ right now juste clone and pull request
 
 Documentation
 -------------
+```vba
 rngRight(rngStartCell As Range, Optional nCell As Integer = 0) as Range
-
+```
 Returns a row range starting from rngStartCell going to the right
 
 If nCell is set to 0, rngRight automatically ends the row before the next empty cell
