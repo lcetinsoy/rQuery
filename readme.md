@@ -34,12 +34,25 @@ set myArrayRange = rq.rngArray(mySheet.range("C1"), nRow = 10)
 'Return a table range with 10 row. Number or column is set automatically
 ```
 
+Running tests
+--------------
+
+open rQuery.test.xlsm
+Activate macro
+Alt+f11
+ctrl+G
+enter "runALL" + enter
+
 Contributing
 ------------
 
-Automatic testing are comming.
+git clone https://github.com/lce-fr/rQuery.git
 
-Just clone and pull request
+Add / fix a feature
+
+Run tests
+
+Pull request
 
 
 Documentation

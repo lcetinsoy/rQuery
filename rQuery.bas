@@ -16,7 +16,7 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Function columnUp(rngStartCell As Range, Optional nCell As Integer = 0) As Range
 
-    
+    Dim rngUp As Range
     If nCell = 0 Then
         If isEmpty(rngStartCell.Offset(-1, 0)) Then
         
@@ -29,6 +29,7 @@ Public Function columnUp(rngStartCell As Range, Optional nCell As Integer = 0) A
         Set rngUp = Range(rngStartCell, rngStartCell.Offset(-nCell + 1, 0))
     End If
     
+    Set columnUp = rngUp
 End Function
 
 
@@ -37,18 +38,20 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Function columnDown(rngStartCell As Range, Optional nCell As Integer = 0) As Range
         
+    Dim rng As Range
     If nCell = 0 Then
         If isEmpty(rngStartCell.Offset(1, 0)) Then
         
-            Set rngDown = rngStartCell
+            Set rng = rngStartCell
         Else
-            Set rngDown = Range(rngStartCell, rngStartCell.End(xlDown))
+            Set rng = Range(rngStartCell, rngStartCell.End(xlDown))
         End If
     Else
         
-        Set rngDown = Range(rngStartCell, rngStartCell.Offset(nCell - 1, 0))
+        Set rng = Range(rngStartCell, rngStartCell.Offset(nCell - 1, 0))
     End If
     
+    Set columnDown = rng
 End Function
 
 
@@ -57,7 +60,7 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Function rowRight(rngStartCell As Range, Optional nCell As Integer = 0) As Range
 
-    
+    Dim rngRight As Range
     If nCell = 0 Then
         If isEmpty(rngStartCell.Offset(0, 1)) Then
         
@@ -69,7 +72,7 @@ Public Function rowRight(rngStartCell As Range, Optional nCell As Integer = 0) A
         
         Set rngRight = Range(rngStartCell, rngStartCell.Offset(0, nCell - 1))
     End If
-    
+    Set rowRight = rngRight
 End Function
 
 
@@ -77,7 +80,7 @@ End Function
 'rngRight: Return an horizontal range containing all cells before a given cell (included)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Function rowLeft(rngStartCell As Range, Optional nCell As Integer = 0) As Range
-
+Dim rngLeft As Range
     If nCell = 0 Then
         If isEmpty(rngStartCell.Offset(0, -1)) Then
         
@@ -90,6 +93,7 @@ Public Function rowLeft(rngStartCell As Range, Optional nCell As Integer = 0) As
         Set rngLeft = Range(rngStartCell, rngStartCell.Offset(0, -nCell + 1))
     End If
     
+    Set rowLeft = rngLeft
 End Function
 
 
@@ -505,19 +509,63 @@ Function tail(rngSourceFC As Range, Optional stopCond As Variant = Nothing, Opti
             End If
         End If
     Else
-         If Not isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(1, 0)) Then
-            Set rngIt = rngSourceFC
-        ElseIf isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(2, 0)) Then
-            Set rngIt = rngSourceFC.Offset(1, 0)
-        ElseIf isEmpty(rngSourceFC) Then
-            Set rngIt = rngSourceFC.Offset(1, 0).End(direction)
-        Else
-            Set rngIt = rngSourceFC.End(direction)
-        End If
-    End If
-               
     
-    Set rngEnd = rngIt
+        If direction = xlToRight Then
+            
+            If Not isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(0, 1)) Then
+                Set rngIt = rngSourceFC
+                
+            ElseIf isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(0, 1)) Then
+            
+                Set rngIt = rngSourceFC.Offset(0, 1)
+                
+            Else
+                Set rngIt = rngSourceFC.End(direction)
+            End If
+                    
+        ElseIf direction = xlToLeft Then
+        
+            If Not isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(0, -1)) Then
+                Set rngIt = rngSourceFC
+                
+            ElseIf isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(0, -1)) Then
+            
+                Set rngIt = rngSourceFC.Offset(0, -1)
+                
+            Else
+                Set rngIt = rngSourceFC.End(direction)
+            End If
+                    
+        
+        ElseIf direction = xlDown Then
+    
+             If Not isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(1, 0)) Then
+                Set rngIt = rngSourceFC
+            ElseIf isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(2, 0)) Then
+                Set rngIt = rngSourceFC.Offset(1, 0)
+            ElseIf isEmpty(rngSourceFC) Then
+                Set rngIt = rngSourceFC.Offset(1, 0).End(direction)
+            Else
+                Set rngIt = rngSourceFC.End(direction)
+            End If
+            
+        ElseIf direction = xlUp Then
+        
+             If Not isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(-1, 0)) Then
+                Set rngIt = rngSourceFC
+            ElseIf isEmpty(rngSourceFC) And isEmpty(rngSourceFC.Offset(-2, 0)) Then
+                Set rngIt = rngSourceFC.Offset(-1, 0)
+            ElseIf isEmpty(rngSourceFC) Then
+                Set rngIt = rngSourceFC.Offset(-1, 0).End(direction)
+            Else
+                Set rngIt = rngSourceFC.End(direction)
+            End If
+            
+        End If
+        
+    End If
+                   
+    Set tail = rngIt
 End Function
 
 Function subArrayRange(rngArray, rowIndexes, colIndexes) As Range
